@@ -1,0 +1,65 @@
+.navbarContainer {
+  height: 115px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 1;
+  border: 1px solid rgb(210, 205, 205);
+  /* border-radius: 15px; */
+  padding: 10px 100px;
+  box-shadow: 0px 4px 4px 0px #00000040;
+  font-family: "Manrope";
+  box-sizing: border-box;
+}
+.links {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 38px;
+  width: 244px;
+  height: 18px;
+  color: rgba(105, 108, 255, 1);
+  font-weight: 500;
+  font-size: 20px;
+  opacity: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  
+}
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: -2%;
+  width: auto;
+  height: auto;
+}
+
+.buttonContainer p {
+  color: rgba(35, 35, 35, 1);
+  opacity: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.buttonContainer button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  height: 51px;
+  padding: 16px 24px;
+  border-radius: 9px;
+  background-color: rgba(105, 108, 255, 1);
+  color: white;
+  cursor: pointer;
+  opacity: 1;
+  box-shadow: 0px 4px 4px 0px #00000040;
+}
+.buttonContainer button:hover{
+   transform: scale(1.1);
+}
