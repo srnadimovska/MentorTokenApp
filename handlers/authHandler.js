@@ -8,7 +8,7 @@ exports.signup = async(req,res) => {
             name: req.body.name,
             email:req.body.email,
             password:req.body.password,
-            role:req.body.role,
+            type:req.body.type,
         });
         res.status(201).json({
             status:'success',
@@ -19,7 +19,7 @@ exports.signup = async(req,res) => {
     } catch(err){
         res.status(500).json({
             status:'fail',
-            err:err.message,
+            message:err.message,
         });
     }
 };
@@ -36,7 +36,7 @@ exports.login = async(req,res) => {
             return res.status(401).send('Invalid email or password!')
         }
 
-        const isPasswordValid = bcrypt.compareSync(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).send('Invalid email or password!');
         }
@@ -46,7 +46,7 @@ exports.login = async(req,res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                type: user.type
             },
             process.env.JWT_SECRET,
             {expiresIn: process.env.JWT_EXPIRES}
@@ -67,7 +67,7 @@ exports.login = async(req,res) => {
     } catch(err) {
         res.status(500).json({
             status:'fail',
-            err: err.message,
+            message: err.message,
         });
     }
 };

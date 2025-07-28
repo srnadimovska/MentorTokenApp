@@ -10,15 +10,35 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'User must have email!'],
     },
-    role: {
-        type: String,
-        enum: ['user','admin'],
-        default: 'user',
-    },
+    
     password: {
         type: String,
         required: [true,'User must have password'],
     },
+    type: {
+        type: String,
+        enum: ['mentor','startup','admin'],
+        required: true,
+    },
+    skills: {
+        type: [String],
+
+    },
+    desc: {
+        type: String,
+    },
+    acceptedJobs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Job'
+    }],
+    representative:{
+        type: String,
+    },
+        jobsPosted: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Job'
+        }],
+
 
 });
 userSchema.pre('save', async function (next) {
