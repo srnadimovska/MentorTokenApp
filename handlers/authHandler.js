@@ -4,6 +4,18 @@ const bcrypt = require('bcryptjs');
 
 exports.signup = async(req,res) => {
     try{
+        if(!['mentor', 'startup'].includes(type)){
+            return res.status(400).json({message: 'Invalid user type!'});
+        };
+        if(type === 'mentor') {
+            if(req.body.representative || req.body.address || req.body.jobPosted){
+                return res.status(400).json({message: 'Mentor can not include representative,address or jobs posted!'})
+            }
+        } else if(type === 'startup'){
+            if(req.body.skills || req.body.phone || req.body.acceptedJobs ){
+                return res.status(400).json({message:'Startup can not include skills,phone or accepted jobs!'})
+            }
+        };
         const newUser = await User.create({
             name: req.body.name,
             email:req.body.email,
