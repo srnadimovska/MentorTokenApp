@@ -7,6 +7,7 @@
   box-sizing: border-box;
   box-shadow: 0px 4px 4px 0px #00000040;
   background: linear-gradient(147.1deg, #696cff 35.1%, #9574ff 77.5%);
+  border: solid 5px #9574ff;
 }
 .leftContainer {
   position: relative;
@@ -36,7 +37,7 @@
 .rocketLogo {
   position: absolute;
   bottom: -10px;
-  left: -140px;
+  left: 10px;
   width: 850px;
   height: auto;
   z-index: 1;

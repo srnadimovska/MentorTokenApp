@@ -86,7 +86,7 @@ function Register() {
   };
 
   const checkPassword = (pass) => {
-    const userName = name.toLowerCase().trim();
+    
     const userEmail = email.toLowerCase().trim();
     const userPass = pass.toLowerCase().trim();
 
@@ -94,7 +94,7 @@ function Register() {
       isLong: userPass.length >= 8,
       includesSymbol: /[\d!@#$%^&*(),.?":{}|<>]/.test(userPass),
       includesNameEmail:
-        !userPass.includes(userName) && !userPass.includes(userEmail),
+        !userPass.includes(userEmail),
     });
   };
 
@@ -119,8 +119,8 @@ function Register() {
           <div className={styles.buttonDiv}>
             <button
               type="button"
-              className={`${styles.button}${
-                userType === "startup" ? styles.active : ""
+              className={`${styles.button} 
+              ${userType === "startup" ? styles.active : ""
               }`}
               onClick={() => {
                 setUserType("startup");
@@ -132,8 +132,8 @@ function Register() {
             </button>
             <button
               type="button"
-              className={`${styles.button}${
-                userType === "mentor" ? styles.active : ""
+              className={`${styles.button} 
+              ${userType === "mentor" ? styles.active : ""
               }`}
               onClick={() => {
                 setUserType("mentor");
@@ -149,7 +149,7 @@ function Register() {
         <div className={styles.formContainer}>
           <form onSubmit={step === 1 ? handleContinue : handleSubmit}>
             {step === 1 && (
-              <div>
+              <>
                 <label>Email</label>
                 <input
                   type="email"
@@ -191,7 +191,7 @@ function Register() {
                       : styles.invalid
                   }
                 >
-                  Cannot contain your name or email address
+                  Cannot contain your email address
                 </p>
                 <p>
                   Password Strength:{" "}
@@ -201,8 +201,10 @@ function Register() {
                     ? "Strong"
                     : "Weak"}
                 </p>
-              </div>
+                </>
+              
             )}
+            
 
             {step === 2 && (
               <>
