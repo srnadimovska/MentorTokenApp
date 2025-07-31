@@ -11,6 +11,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 
 
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -43,7 +44,8 @@ const router = createBrowserRouter([
   {
     path:'/dashboard',
     element:<Dashboard />
-  }
+  },
+  
 ]);
 
 function App() {

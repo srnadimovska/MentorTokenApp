@@ -1,8 +1,7 @@
 .registerContainer {
   display: flex;
   flex-direction: row;
-  width: 100%;
-  max-width: 1440px;
+  width: 1440px;
   height: 1024px;
   opacity: 1;
   box-sizing: border-box;
@@ -84,6 +83,7 @@
 .buttonDiv{
     display: flex;
     flex-direction: row;
+    gap: 5px;
 }
 .rightContainer img {
   width: 50px;
@@ -117,18 +117,44 @@
   padding: 15px;
 }
 
-.rightContainer button {
+.buttonDiv button {
   margin-top: 20px;
-  background-color: #696cff;
-  color: white;
+  background-color: #e6dbdb;
+  color: #6c6c6c;;
   border: none;
   border-radius: 9px;
   height: 50px;
   font-size: 18px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width:100%;
 }
 
 .rightContainer button:hover {
   background-color: #5c5fff;
+  color:white;
+  border: none;
+}
+.buttonDiv .active {
+  background-color: #696cff;
+  color: white;
+  border: none;
+}
+.buttonDiv button:not(.active):hover {
+  background-color: #e6dbdb;
+  border: none;
+}
+.passwordChecklist p {
+  font-size: 14px;
+  margin: 4px 0;
+  transition: color 0.3s ease;
+}
+
+.valid {
+  color: green;
+  font-weight: 500;
+}
+
+.invalid {
+  color: #bbb;
 }
