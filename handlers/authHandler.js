@@ -17,6 +17,11 @@ exports.signup = async (req, res) => {
     } = req.body;
     console.log(req.body);
 
+    let photoFilename = null;
+    if (req.file) {
+      photoFilename = req.file.filename;
+    }
+
     
     if (
       type === "mentor" &&
@@ -50,6 +55,7 @@ exports.signup = async (req, res) => {
       desc,
       representative,
       address,
+      photo: photoFilename,
     }
     );
     // vo zavisnost koj type e,kreirame objekt od req.body i go stavame vo await yser create(if else)

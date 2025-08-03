@@ -20,6 +20,7 @@ function Register() {
   const [representative, setRepresentative] = useState("");
   const [address, setAddress] = useState("");
   const [inviteEmails, setInviteEmails] = useState("");
+  const [photo, setPhoto] = useState(null);
 
   const [passwordCheck, setPasswordCheck] = useState({
     isLong: false,
@@ -49,31 +50,32 @@ function Register() {
     e.preventDefault();
     setError("");
 
-    let user = {
-      email,
-      password,
-      type: userType,
-      name,
-    };
+    
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("type", userType);
+    
 
     if (userType === "mentor") {
-      // user.name = name;
-      user.phone = phone;
-      user.skills = skills;
+      formData.append("name",name);
+      formData.append ("phone",phone);
+      formData.append ("skills", skills);
     } else {
-      // user.name = name;
-      user.representative = representative;
-      user.address = address;
+      formData.append("name",name);
+      formData.append("representative",representative);
+      formData.append("address",address);
     }
     if (inviteEmails) {
-      user.inviteEmails = inviteEmails.split(",").map((e) => e.trim());
+      formData.append ("inviteEmails", inviteEmails);
     }
-
+  if (photo) formData.append("photo", photo);
+  
     try {
       const res = await axios.post(
         "http://localhost:11000/api/v1/register",
-        user,
-        { headers: { "Content-Type": "application/json" } }
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       if (res.status === 201 || res.data.message === "New user created") {
@@ -209,13 +211,32 @@ function Register() {
 
             {step === 2 && (
               <>
+              <div className={styles.centerWrapper}>
+                    <div className={styles.buttonLogo}>
+                      <label htmlFor="photo-upload">
+                        
+                      <img src={
+                        photo ? URL.createObjectURL(photo) : 
+                        userType === "mentor" ? logoMentor : logoStartup
+                      } alt="upload" 
+                      className={styles.clickableImg}
+                      title="Upload profile picture"
+                      />
+  
+                      </label>
+                      <input
+                      type="file"
+                      id="photo-upload"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) => setPhoto(e.target.files[0])}
+                    />
+                    
+                    </div>
+                    </div>
                 {userType === "mentor" && (
                   <>
-                    <div className={styles.buttonLogo}>
-                      <button>
-                      <img src={logoMentor} alt="logoMentor" />
-                      </button>
-                    </div>
+                  
                     <label>Name</label>
                     <input
                       type="text"
@@ -241,11 +262,7 @@ function Register() {
                 )}
                 {userType === "startup" && (
                   <>
-                    <div className={styles.buttonLogo}>
-                      <button >
-                      <img src={logoStartup} alt="logoStratup" />
-                      </button>
-                    </div>
+                    
                     <label>Name</label>
                     <input
                       type="text"

@@ -3,7 +3,7 @@ const User = require("../pkg/model/UserSchema");
 const multer = require("multer");
 const uuid = require("uuid");
 
-const imageId = uuid.v4();
+
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -11,6 +11,7 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, callback) => {
     const ext = file.mimetype.split("/")[1];
+    const imageId = uuid.v4();
     callback(null, `user-${imageId}-${Date.now()}.${ext}`);
   },
 });
