@@ -7,6 +7,7 @@ const jwt = require("express-jwt");
 const db = require("./pkg/db/index");
 const auth = require("./handlers/authHandler");
 const user = require("./handlers/usersHandler");
+const job = require("./handlers/jobsHandler");
 
 // for multer
 const multer = require("multer");
@@ -77,6 +78,12 @@ app.patch("/api/v1/uploadphoto/:id", user.uploadUserPhoto, user.update);
 app.get("/api/v1/user", user.getAllUsers);
 app.get("/api/v1/user/:id", user.getUserbyId);
 app.delete("/api/v1/user/:id", user.deleteUser);
+
+app.get('/api/v1/jobs', job.getAllJobs);
+app.get('/api/v1/jobs/:id', job.getOneJob);
+app.post('/api/v1/job', job.create);
+app.patch('/api/v1/job/:id', job.updateJob);
+app.delete('/api/v1/job/:id', job.deleteJob);
 
 app.listen(process.env.PORT, (err) => {
   if (err) {
