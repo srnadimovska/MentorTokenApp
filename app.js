@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const jwt = require('express-jwt');
 const db = require('./pkg/db/index');
 const auth = require('./handlers/authHandler');
+const user = require('./handlers/usersHandler');
 
 dotenv.config({path:`${__dirname}/config.env`});
 
@@ -41,6 +42,11 @@ app.use(
       path: ['/api/v1/register', '/api/v1/login'],
     })
 );
+
+app.patch('/api/v1/uploadphoto/:id', user.uploadUserPhoto,user.update);
+app.get('/api/v1/user', user.getAllUsers);
+app.get('/api/v1/user/:id', user.getUserbyId);
+app.delete('/api/v1/user/:id', user.deleteUser);
 
 
 app.listen(process.env.PORT, (err) => {

@@ -19,7 +19,7 @@ function Login() {
 
     try {
       const res = await axios.post(
-        "http://localhost:10000/api/v1/login",
+        "http://localhost:11000/api/v1/login",
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );

@@ -2,6 +2,8 @@ import styles from "./Register.module.css";
 import rocket from "../assets/rocket.png";
 import logo from "../assets/Group 8626.svg";
 import logo1 from "../assets/Group 5083.svg";
+import logoStartup from "../assets/logoStartup.png";
+import logoMentor from "../assets/logoMentor.png";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -69,7 +71,7 @@ function Register() {
 
     try {
       const res = await axios.post(
-        "http://localhost:10000/api/v1/register",
+        "http://localhost:11000/api/v1/register",
         user,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -86,17 +88,20 @@ function Register() {
   };
 
   const checkPassword = (pass) => {
-    
     const userEmail = email.toLowerCase().trim();
     const userPass = pass.toLowerCase().trim();
 
     setPasswordCheck({
       isLong: userPass.length >= 8,
       includesSymbol: /[\d!@#$%^&*(),.?":{}|<>]/.test(userPass),
-      includesNameEmail:
-        !userPass.includes(userEmail),
+      includesNameEmail: !userPass.includes(userEmail),
     });
   };
+
+  const isPasswordValid =
+    passwordCheck.isLong &&
+    passwordCheck.includesSymbol &&
+    passwordCheck.includesNameEmail;
 
   return (
     <div className={styles.registerContainer}>
@@ -120,8 +125,7 @@ function Register() {
             <button
               type="button"
               className={`${styles.button} 
-              ${userType === "startup" ? styles.active : ""
-              }`}
+              ${userType === "startup" ? styles.active : ""}`}
               onClick={() => {
                 setUserType("startup");
                 setStep(1);
@@ -133,8 +137,7 @@ function Register() {
             <button
               type="button"
               className={`${styles.button} 
-              ${userType === "mentor" ? styles.active : ""
-              }`}
+              ${userType === "mentor" ? styles.active : ""}`}
               onClick={() => {
                 setUserType("mentor");
                 setStep(1);
@@ -201,23 +204,25 @@ function Register() {
                     ? "Strong"
                     : "Weak"}
                 </p>
-                </>
-              
+              </>
             )}
-            
 
             {step === 2 && (
               <>
-                <label>Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-
                 {userType === "mentor" && (
                   <>
+                    <div className={styles.buttonLogo}>
+                      <button>
+                      <img src={logoMentor} alt="logoMentor" />
+                      </button>
+                    </div>
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
                     <label>Phone</label>
                     <input
                       type="text"
@@ -236,6 +241,18 @@ function Register() {
                 )}
                 {userType === "startup" && (
                   <>
+                    <div className={styles.buttonLogo}>
+                      <button >
+                      <img src={logoStartup} alt="logoStratup" />
+                      </button>
+                    </div>
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
                     <label>Legal Representative</label>
                     <input
                       type="text"
@@ -266,7 +283,16 @@ function Register() {
             {error && (
               <div style={{ color: "red", marginBottom: 8 }}>{error}</div>
             )}
-            <button type="submit">{step === 1 ? "Continue" : "Submit"}</button>
+            <button
+              type="submit"
+              className={styles.Continue}
+              disabled={!isPasswordValid}
+              title={
+                !isPasswordValid ? "Can't continue, password is not valid!" : ""
+              }
+            >
+              {step === 1 ? "Continue" : "Submit"}
+            </button>
           </form>
         </div>
 
