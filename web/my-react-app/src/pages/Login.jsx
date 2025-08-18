@@ -2,6 +2,7 @@ import styles from "./Login.module.css";
 import rocket from "../assets/rocket.png";
 import logo from "../assets/Group 8626.svg";
 import logo1 from "../assets/Group 5083.svg";
+import background from "../assets/pozadina.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";

@@ -8,6 +8,7 @@ const db = require("./pkg/db/index");
 const auth = require("./handlers/authHandler");
 const user = require("./handlers/usersHandler");
 const job = require("./handlers/jobsHandler");
+const application = require("./handlers/applicationHandler");
 
 // for multer
 const multer = require("multer");
@@ -84,6 +85,12 @@ app.get('/api/v1/jobs/:id', job.getOneJob);
 app.post('/api/v1/job', job.create);
 app.patch('/api/v1/job/:id', job.updateJob);
 app.delete('/api/v1/job/:id', job.deleteJob);
+
+app.get('/api/v1/application', application.getAllApps);
+app.get('/api/v1/application/:id', application.getOneApp);
+app.post('/api/v1/application', application.create);
+app.patch('/api/v1/application/:id', application.updateApp);
+app.delete('/api/v1/application/:id', application.deleteApp);
 
 app.listen(process.env.PORT, (err) => {
   if (err) {
