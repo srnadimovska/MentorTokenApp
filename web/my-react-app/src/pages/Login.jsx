@@ -26,7 +26,14 @@ function Login() {
       );
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
-        navigate("/dashboard");
+
+        const userType = res.data.user?.userType || res.data.user?.type;
+
+        if (userType === "mentor") {
+          navigate("/dashboardMentor");
+        } else if (userType === "startup") {
+          navigate("/dashboardStartup");
+        }
       } else {
         setError(res.data.error || "Greska pri najavuvanje");
       }
@@ -72,12 +79,11 @@ function Login() {
               placeholder="password"
             />
             <p>Forgot your password?</p>
-          {error && (
-            <div style={{ color: "red", marginBottom: 8 }}>{error}</div>
-          )}
-          <button type="submit">Login in</button>
+            {error && (
+              <div style={{ color: "red", marginBottom: 8 }}>{error}</div>
+            )}
+            <button type="submit">Login in</button>
           </form>
-          
         </div>
 
         <p>Don't have account?</p>

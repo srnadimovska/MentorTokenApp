@@ -50,27 +50,25 @@ function Register() {
     e.preventDefault();
     setError("");
 
-    
     const formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
     formData.append("type", userType);
-    
 
     if (userType === "mentor") {
-      formData.append("name",name);
-      formData.append ("phone",phone);
-      formData.append ("skills", skills);
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("skills", skills);
     } else {
-      formData.append("name",name);
-      formData.append("representative",representative);
-      formData.append("address",address);
+      formData.append("name", name);
+      formData.append("representative", representative);
+      formData.append("address", address);
     }
     if (inviteEmails) {
-      formData.append ("inviteEmails", inviteEmails);
+      formData.append("inviteEmails", inviteEmails);
     }
-  if (photo) formData.append("photo", photo);
-  
+    if (photo) formData.append("photo", photo);
+
     try {
       const res = await axios.post(
         "http://localhost:11000/api/v1/register",
@@ -79,7 +77,13 @@ function Register() {
       );
 
       if (res.status === 201 || res.data.message === "New user created") {
-        navigate("/dashboard");
+
+        const userType = res.data.user?.userType || res.data.user?.type;
+        if (userType === "mentor") {
+          navigate("/dashboardMentor");
+        } else if (userType === "startup") {
+          navigate("/dashboardStartup");
+        }
       } else {
         setError(res.data.error || "Error creating new user!");
       }
@@ -211,32 +215,33 @@ function Register() {
 
             {step === 2 && (
               <>
-              <div className={styles.centerWrapper}>
-                    <div className={styles.buttonLogo}>
-                      <label htmlFor="photo-upload">
-                        
-                      <img src={
-                        photo ? URL.createObjectURL(photo) : 
-                        userType === "mentor" ? logoMentor : logoStartup
-                      } alt="upload" 
-                      className={styles.clickableImg}
-                      title="Upload profile picture"
+                <div className={styles.centerWrapper}>
+                  <div className={styles.buttonLogo}>
+                    <label htmlFor="photo-upload">
+                      <img
+                        src={
+                          photo
+                            ? URL.createObjectURL(photo)
+                            : userType === "mentor"
+                            ? logoMentor
+                            : logoStartup
+                        }
+                        alt="upload"
+                        className={styles.clickableImg}
+                        title="Upload profile picture"
                       />
-  
-                      </label>
-                      <input
+                    </label>
+                    <input
                       type="file"
                       id="photo-upload"
                       accept="image/*"
                       style={{ display: "none" }}
                       onChange={(e) => setPhoto(e.target.files[0])}
                     />
-                    
-                    </div>
-                    </div>
+                  </div>
+                </div>
                 {userType === "mentor" && (
                   <>
-                  
                     <label>Name</label>
                     <input
                       type="text"
@@ -262,7 +267,6 @@ function Register() {
                 )}
                 {userType === "startup" && (
                   <>
-                    
                     <label>Name</label>
                     <input
                       type="text"

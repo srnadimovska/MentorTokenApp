@@ -8,7 +8,8 @@ import Contact from './pages/Contact'
 import Error from './pages/Error'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
+import DashboardMentor from './pages/DashboardMentor'
+import DashboardStartup from './pages/DashboardStartup'
 
 
 
@@ -42,8 +43,12 @@ const router = createBrowserRouter([
     element:<Register />
   },
   {
-    path:'/dashboard',
-    element:<Dashboard />
+    path:'/dashboardMentor',
+    element:<DashboardMentor />
+  },
+  {
+    path:'/dashboardStartup',
+    element:<DashboardStartup />
   },
   
 ]);

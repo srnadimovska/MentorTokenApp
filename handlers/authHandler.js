@@ -22,7 +22,6 @@ exports.signup = async (req, res) => {
       photoFilename = req.file.filename;
     }
 
-    
     if (
       type === "mentor" &&
       (req.body.representative || req.body.address || req.body.jobsPosted)
@@ -41,11 +40,8 @@ exports.signup = async (req, res) => {
         message: "Startup can not include skills,phone or accepted jobs!",
       });
     }
-    
-    
-    
-    const newUser = await User.create(
-      {
+
+    const newUser = await User.create({
       name: name || "",
       email,
       password,
@@ -56,14 +52,15 @@ exports.signup = async (req, res) => {
       representative,
       address,
       photo: photoFilename,
-    }
-    );
-    // vo zavisnost koj type e,kreirame objekt od req.body i go stavame vo await yser create(if else)
+    });
 
     res.status(201).json({
       status: "success",
-      data: {
-        user: newUser,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        type: newUser.type,
       },
     });
   } catch (err) {
@@ -97,7 +94,7 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        type: user.type,
+        userType: user.type,
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES }
@@ -113,6 +110,12 @@ exports.login = async (req, res) => {
     res.status(200).json({
       status: "success",
       token,
+      user: {
+        userType: user.type,
+        name: user.name,
+        email: user.email,
+        id: user._id,
+      },
     });
   } catch (err) {
     console.error("Login error:", err);
