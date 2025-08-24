@@ -44,7 +44,12 @@ const router = createBrowserRouter([
   },
   {
     path:'/dashboardMentor',
-    element:<DashboardMentor />
+    element:<DashboardMentor />,
+    children: [
+      {index: true, element: <MentorDashboard/>},
+      {path: 'mystats', element: <Stats />},
+      {path: 'jobsfeed', element: <JobFeed />},
+    ]
   },
   {
     path:'/dashboardStartup',
