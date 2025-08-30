@@ -5,7 +5,7 @@ import logo1 from "../assets/Group 5083.svg";
 import background from "../assets/pozadina.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import  {jwtDecode}  from "jwt-decode";
 import { useState } from "react";
 
 function Login() {
@@ -26,8 +26,11 @@ function Login() {
       );
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
+        
+        const decoded = jwtDecode(res.data.token);
+  console.log("Decoded user:", decoded);
 
-        const userType = res.data.user?.userType || res.data.user?.type;
+        const userType = decoded.userType || decoded.type;
 
         if (userType === "mentor") {
           navigate("/dashboardMentor");

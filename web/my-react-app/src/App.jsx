@@ -10,6 +10,9 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import DashboardMentor from './pages/DashboardMentor'
 import DashboardStartup from './pages/DashboardStartup'
+import MentorDashboard from './pages/MentorDashboard'
+import Stats from './pages/Stats'
+import JobFeed from './pages/JobFeed'
 
 
 

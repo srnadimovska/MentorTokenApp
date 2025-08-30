@@ -95,6 +95,7 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         userType: user.type,
+        photo: user.photo,
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES }
@@ -115,6 +116,7 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         id: user._id,
+        photo: user.photo,
       },
     });
   } catch (err) {

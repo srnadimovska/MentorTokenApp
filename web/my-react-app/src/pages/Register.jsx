@@ -78,12 +78,7 @@ function Register() {
 
       if (res.status === 201 || res.data.message === "New user created") {
 
-        const userType = res.data.user?.userType || res.data.user?.type;
-        if (userType === "mentor") {
-          navigate("/dashboardMentor");
-        } else if (userType === "startup") {
-          navigate("/dashboardStartup");
-        }
+        navigate('/login');
       } else {
         setError(res.data.error || "Error creating new user!");
       }
