@@ -2,13 +2,14 @@ const Job = require("../pkg/model/jobSchema");
 
 exports.create = async (req, res) => {
   try {
-    const newJob = await Job.create(req.body);
+    const newJob = await Job.create({...req.body, companyId: req.auth.id});
     console.log(newJob);
 
     res.status(201).json({
       status: "success",
       data: {
         newJob,
+        
       },
     });
   } catch (err) {

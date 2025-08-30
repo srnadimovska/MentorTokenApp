@@ -19,7 +19,7 @@ const appSchema = new mongoose.Schema({
     },
     applicationType: {
         type: String,
-        enum: ["mentorToCompany","companyTiMentor"],
+        enum: ["mentorToCompany","companyToMentor"],
         required: true,
     },
     status: {
