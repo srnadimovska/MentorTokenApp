@@ -89,8 +89,11 @@ app.delete('/api/v1/job/:id', job.deleteJob);
 app.get('/api/v1/application', application.getAllApps);
 app.get('/api/v1/application/:id', application.getOneApp);
 app.post('/api/v1/application', application.create);
+app.get('/api/v1/application/mentor/:id', application.applicationByMentor);
 app.patch('/api/v1/application/:id', application.updateApp);
 app.delete('/api/v1/application/:id', application.deleteApp);
+app.get("/api/v1/mentor/offers", application.getMentorOffersJob);
+
 
 app.listen(process.env.PORT, (err) => {
   if (err) {

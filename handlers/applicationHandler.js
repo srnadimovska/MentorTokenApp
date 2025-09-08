@@ -183,3 +183,63 @@ exports.deleteApp = async (req, res) => {
     });
   }
 };
+
+exports.applicationByMentor = async (req, res) => {
+  
+  try {
+    const mentorId = req.auth.id;  
+    const userType = req.auth.userType;
+    console.log("Auth info:", req.auth);
+
+    if (userType !== "mentor") {
+      return res.status(403).json({
+        status: "fail",
+        message: "Only mentors allowed!",
+      });
+    }
+
+    const applications = await Application.find({ mentorId })
+      .populate("jobId", "title description")
+      .populate("companyId", "name email");
+
+    res.status(200).json({
+      status: "success",
+      data: applications,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+
+exports.getMentorOffersJob = async(req,res) => {
+  try {
+    const mentorId = req.auth.id;
+    if (!mentorId) {
+      return res.status(401).json({
+        status: "fail",
+        message: "Unauthorized: no mentor ID in token",
+      });
+    }
+    const offers = await Application.find({
+      mentorId,
+      applicationType: "companyToMentor",
+      status:"pending",
+    })
+    .populate("jobId", "title description").populate("companyId","name photo");
+
+    res.status(200).json({
+      status:"success",
+      data: {
+        offers,
+      },
+    });
+  } catch(err){
+    res.status(500).json({
+      status:'fail',
+      message:err.message,
+    });
+  }
+};

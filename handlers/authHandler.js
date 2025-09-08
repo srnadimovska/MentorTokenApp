@@ -52,6 +52,7 @@ exports.signup = async (req, res) => {
       representative,
       address,
       photo: photoFilename,
+      
     });
 
     res.status(201).json({
@@ -119,6 +120,7 @@ exports.login = async (req, res) => {
         photo: user.photo,
       },
     });
+    
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({

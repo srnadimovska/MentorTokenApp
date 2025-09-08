@@ -73,7 +73,8 @@ exports.getAllUsers = async(req,res) => {
 
 exports.getUserbyId = async(req,res) => {
     try{
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id)
+        
 
         const populateUser = 
         user.type === "startup" ?
