@@ -45,7 +45,7 @@ function Dashboard() {
               </p>
             </Link>
 
-            <div>
+            <div className={styles.logoutBtnWrapper}>
               <button onClick={handleLogout}>
                 <img src={logoutButton} alt="logout" />
               </button>

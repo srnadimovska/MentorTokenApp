@@ -65,6 +65,7 @@ fetchOffers();
                   <input type="text" placeholder="Search ..." />
                   <img src={search} alt="search-icon" />
                 </div>
+                
         
                 {user && (
                   <div className={styles.userInfo}>
@@ -76,6 +77,7 @@ fetchOffers();
                   </div>
                 )}
               </div>
+              <h2>All startup Jobs</h2>
               <div className={styles.jobFeed}>
                 {offers.map((offer)=> {
                     const companyPhoto = offer.companyId?.photo
@@ -90,6 +92,7 @@ fetchOffers();
                         <h3>{offer.jobId?.title}</h3>
                         <p className={styles.newOffer}>New Job Offer</p>
                         <p>{offer.jobId?.description}</p>
+                        <button>View More</button>
 
                     </div>
 

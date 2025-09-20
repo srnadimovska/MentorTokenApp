@@ -1,4 +1,4 @@
-const { application } = require('express');
+
 const mongoose = require('mongoose');
 
 const appSchema = new mongoose.Schema({
@@ -24,6 +24,7 @@ const appSchema = new mongoose.Schema({
     },
     status: {
         type: String,
+        enum: ["pending", "in progress", "done", "rejected"],
         default:"pending",
     },
     acceptedStatus:{

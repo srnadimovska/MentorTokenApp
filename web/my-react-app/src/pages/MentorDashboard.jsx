@@ -1,6 +1,6 @@
 import styles from "./MentorDashboard.module.css";
 import search from "../assets/search.png";
-import {jwtDecode} from "jwt-decode";
+import  {jwtDecode} from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -8,58 +8,80 @@ function MentorDashboard() {
   const [user, setUser] = useState(null);
   const [assigned, setAssigned] = useState([]);
   const [pending, setPending] = useState([]);
+  
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const[error,setError] = useState(null);
 
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    
-    if (!token) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const decoded = jwtDecode(token);
+      console.log("Decoded user in MentorDashboard:", decoded);
       setUser({
         name: decoded.name,
         photo: decoded.photo,
         role: decoded.userType,
-        id:decoded.id,
+        id: decoded.id,
       });
     } catch (err) {
       console.log("Failed to decode token");
+      setError('Invalid token');
+      setLoading(false);
     }
   }, [token]);
+
+  
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchData = async () => {
+      
+
+      try {
+        const res = await axios.get(
+          `http://localhost:11000/api/v1/application/mentor/${user.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const apps = res.data.data || [];
+        setApplications(apps);
+        setAssigned(
+          apps.filter((app) =>
+            //  app.status === "in progress" || app.status === "done" || app.status === "rejected"));
+          ["in progress","done","rejected"].includes(app.status)
+));
+        setPending(apps.filter((app) => app.status === "pending"));
+        
+      } catch (err) {
+        console.log("Error fetching the data:", err.response || err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user, token]);
 
   const photo = user?.photo
     ? `http://localhost:11000/uploads/${user.photo}`
     : "/default.png";
 
-    useEffect(() => {
-  const fetchData = async () => {
-    if (!user) return;
-
-    try {
-      const res = await axios.get(`http://localhost:11000/api/v1/application/mentor/${user.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const apps = res.data.data;
-      setApplications(apps);
-      setAssigned(apps.filter(app => app.status === "accepted"));
-      setPending(apps.filter(app => app.status === "pending"));
-    } catch (err) {
-      console.log('Error fetching the data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, [token,user]);
-
-    if (loading) return <p >Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+  if (!token) return <p>Please log in to view your dashboard.</p>;
 
   return (
+    
     <>
       <div className={styles.searchDiv}>
         <div className={styles.searchArea}>
@@ -77,55 +99,74 @@ function MentorDashboard() {
           </div>
         )}
       </div>
+
       <div className={styles.jobsDiv}>
-        <div>
+        <div className={styles.section}>
           <h2>Assigned Jobs</h2>
+          <div className={styles.tabs}>
+            <button>All</button>
+            <button>Done</button>
+            <button>Rejected</button>
+            <button>In Progress</button>
+          </div>
+
           {assigned.length > 0 ? (
-          <ul>
-            {assigned.map(app => (
-              <li key={app._id} >
-                <p><strong>Job:</strong> {app.jobId?.title}</p>
-                
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No assigned jobs yet.</p>
-        )}
+            <div className={styles.cards}>
+              {assigned.map((app) => (
+                <div key={app._id} className={styles.card}>
+                  <p className={styles.jobTitle}>{app.jobId?.title}</p>
+                  <span
+                    className={`${styles.status} ${
+                      styles[app.status.toLowerCase().replace(/\s+/g, "-")] ||
+                      ""
+                    }`}
+                  >
+                    {app.status.toUpperCase()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No assigned jobs yet.</p>
+          )}
         </div>
-        <div>
+
+        <div className={styles.section}>
           <div>
             <h2>Pending jobs</h2>
             <p>Jobs offered from your startup</p>
             {pending.length > 0 ? (
-          <ul>
-            {pending.map(app => (
-              <li key={app._id} >
-                <p><strong></strong> {app.jobId?.title}</p>
-                
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No pending applications.</p>
-        )}
+              <div className={styles.cards}>
+                {pending.map((app) => (
+                  <div key={app._id} className={styles.card}>
+                    <p className={styles.jobTitle}>{app.jobId?.title}</p>
+                    <div className={styles.actions}>
+                      <button className={styles.accept}>Accept</button>
+                      <button className={styles.reject}>Reject</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No pending applications.</p>
+            )}
           </div>
-          <div>
+
+          <div className={styles.section}>
             <h2>Applications sent</h2>
             <p>Jobs you have applied for</p>
             {applications.length > 0 ? (
-          <ul>
-            {applications.map(app => (
-              <li key={app._id} >
-                <p><strong></strong> {app.jobId?.title}</p>
-                <p><strong>Status:</strong> {app.status}</p>
-                <p><strong>Type:</strong> {app.applicationType}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No applications sent yet.</p>
-        )}
+              <div className={styles.cards}>
+                {applications.map((app) => (
+                  <div key={app._id} className={styles.card}>
+                    <p className={styles.jobTitle}> {app.jobId?.title}</p>
+                    
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No applications sent yet.</p>
+            )}
           </div>
         </div>
       </div>
