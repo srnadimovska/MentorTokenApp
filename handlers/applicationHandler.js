@@ -243,3 +243,91 @@ exports.getMentorOffersJob = async(req,res) => {
     });
   }
 };
+
+exports.getApplicationsForStartup = async (req, res) => {
+  try {
+    const startupId = req.auth.id;  
+    const userType = req.auth.userType;
+    console.log("Auth info:", req.auth);
+
+
+    if (userType !== "startup") {
+      return res.status(403).json({
+        status: "fail",
+        message: "Only startups allowed!",
+      });
+    }
+
+    const apps = await Application.find({ companyId: startupId })
+      .populate("jobId", "title")
+      .populate("mentorId", "name photo");
+
+    res.status(200).json({
+      status: "success",
+      data: apps,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+
+
+
+exports.getTopMentorsForStartup = async (req, res) => {
+  try {
+    const startupId = req.auth.id;
+    const userType = req.auth.userType;
+    
+    if (userType !== "startup") {
+      return res.status(403).json({
+        status: "fail",
+        message: "Only startups allowed!",
+      });
+    }
+
+    // Aggregate mentors for this startup
+    const stats = await Application.aggregate([
+      {
+        $match: {
+          companyId: new mongoose.Types.ObjectId(startupId),
+          status: "done", // count only finished jobs
+        },
+      },
+      {
+        $group: {
+          _id: "$mentorId",
+          achievedJobs: { $sum: 1 },
+        },
+      },
+      { $sort: { achievedJobs: -1 } },
+      { $limit: 3 },
+    ]);
+
+    // Populate mentor info
+    const mentors = await Promise.all(
+      stats.map(async (s) => {
+        const mentor = await User.findById(s._id).select("name photo");
+        return {
+          _id: mentor._id,
+          name: mentor.name,
+          photo: mentor.photo,
+          achievedJobs: s.achievedJobs,
+        };
+      })
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: mentors,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+

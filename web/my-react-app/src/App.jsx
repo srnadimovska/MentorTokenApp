@@ -13,6 +13,9 @@ import DashboardStartup from './pages/DashboardStartup'
 import MentorDashboard from './pages/MentorDashboard'
 import Stats from './pages/Stats'
 import JobFeed from './pages/JobFeed'
+import StartupDashboard from './pages/StartupDashboard'
+import StartupMentors from './pages/StartupMentors'
+import StartupJobs from './pages/StartupJobs'
 
 
 
@@ -56,7 +59,12 @@ const router = createBrowserRouter([
   },
   {
     path:'/dashboardStartup',
-    element:<DashboardStartup />
+    element:<DashboardStartup />,
+    children: [
+      {index: true, element:<StartupDashboard/>},
+      {path: 'mymentors',element:<StartupMentors/>},
+      {path:'jobs',element:<StartupJobs/>}
+    ]
   },
   
 ]);
