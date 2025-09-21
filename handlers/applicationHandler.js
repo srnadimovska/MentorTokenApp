@@ -260,14 +260,15 @@ exports.getApplicationsForStartup = async (req, res) => {
     }
 
     const apps = await Application.find({ companyId: startupId })
-      .populate("jobId", "title")
-      .populate("mentorId", "name photo");
+      .populate("jobId", "title description")
+      .populate("mentorId", "name email photo");
 
     res.status(200).json({
       status: "success",
       data: apps,
     });
   } catch (err) {
+    console.log('Startup apps error',err)
     res.status(500).json({
       status: "fail",
       message: err.message,

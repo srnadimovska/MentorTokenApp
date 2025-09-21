@@ -1,8 +1,12 @@
 import styles from "./StartupDashboard.module.css";
 import search from "../assets/search.png";
+import symbol from "../assets/mentorsymbol.png";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  LineChart,Line,XAxis,YAxis,Tooltip,ResponsiveContainer
+} from "recharts";
 
 function StartupDashboard() {
   const [user, setUser] = useState(null);
@@ -50,7 +54,7 @@ function StartupDashboard() {
 
     } catch(err){
         console.log("Error fetching the data:", err.response || err.message);
-        // setError('Error fetching data')
+        
     }finally {
         setLoading(false);
       }
@@ -59,14 +63,20 @@ function StartupDashboard() {
     fetchData();
   }, [token]);
     
-
-    
-      
- 
-
   const photo = user?.photo
     ? `http://localhost:11000/uploads/${user.photo}`
     : "/default.png";
+
+     const chartData = [
+      {month: "Jan", value: 1000},
+      { month: "Feb", value: 2500 },
+    { month: "Mar", value: 3500 },
+    { month: "Apr", value: 4000 },
+    { month: "May", value: 5000 },
+    { month: "Jun", value: 4500 },
+    { month: "Jul", value: 4800 },
+    { month: "Aug", value: 3000 },
+    ];
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -90,10 +100,10 @@ function StartupDashboard() {
         )}
       </div>
 
-      <div className={styles.jobsDiv}>
+      <div className={styles.dashboardWrapper}>
 
-      <div className={styles.section}>
-        <h2>Assigned Jobs</h2>
+      <div className={styles.jobsSection}>
+        <h3>Assigned Jobs</h3>
         <div className={styles.tabs}>
                     <button>All</button>
                     <button>Done</button>
@@ -103,27 +113,53 @@ function StartupDashboard() {
         {apps.map((app) => (
           <div key={app._id} className={styles.jobRow}>
             <span>{app.jobId.title}</span>
-            <span className={`status ${app.status.toLowerCase()}`}>
-              {app.status.toUpperCase()}
+            <span className={`status ${app.acceptedStatus.toLowerCase()}`}>
+              {app.acceptedStatus.toUpperCase()}
             </span>
           </div>
         ))}
       </div>
 
-      <div className={styles.section}>
-        <h2>Best Performing Mentors</h2>
+      <div className={styles.mentorsSection}>
+        <h3>Best Performing Mentors</h3>
         {mentors.map((m) => (
-          <div key={m._id} className={styles.mentorRow}>
+          <div key={m._id} className={styles.mentorCard}>
             <img
               src={`http://localhost:11000/uploads/${m.photo}`}
               alt={m.name}
             />
+            <div className={styles.mentorInfo}>
             <span>{m.name}</span>
-            <span>{m.achievedJobs} Achieved Jobs</span>
+            <div className={styles.achievedJobs}>
+            <span className={styles.number}>{m.achievedJobs}</span>
+            <span>Achieved Jobs</span>
+            </div>
+            <span><img src={symbol} alt="mentor-symbol"/></span>
+            </div>
           </div>
         ))}
       </div>
+      <div className={styles.bottomWrapper}>
+                  <div className={styles.performanceCard}>
+                    <h3>Performance Over Time</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <LineChart data={chartData}>
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Line
+                            type="monotone"
+                            dataKey="value"
+                            stroke="#6c63ff"
+                            strokeWidth={3}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+      
+                  </div>
       </div>
+      </div>
+      
     </>
   );
 }
