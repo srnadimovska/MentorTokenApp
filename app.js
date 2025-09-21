@@ -94,7 +94,7 @@ app.patch('/api/v1/application/:id', application.updateApp);
 app.delete('/api/v1/application/:id', application.deleteApp);
 app.get("/api/v1/mentor/offers", application.getMentorOffersJob);
 app.get("/api/v1/startup/applications", application.getApplicationsForStartup);
-app.get("/api/v1/startup/top-mentors", application.getTopMentorsForStartup);
+app.get("/api/v1/startup/top-mentors", application.topMentors);
 
 
 app.listen(process.env.PORT, (err) => {

@@ -57,7 +57,7 @@ function MentorDashboard() {
         setApplications(apps);
         setAssigned(
           apps.filter((app) =>
-            //  app.status === "in progress" || app.status === "done" || app.status === "rejected"));
+  
           ["in progress","done","rejected"].includes(app.status)
 ));
         setPending(apps.filter((app) => app.status === "pending"));

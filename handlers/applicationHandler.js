@@ -1,6 +1,7 @@
 const Application = require("../pkg/model/applicationSchema");
 const Job = require("../pkg/model/jobSchema");
 const User = require("../pkg/model/UserSchema");
+const mongoose = require('mongoose');
 
 exports.create = async (req, res) => {
   try {
@@ -276,24 +277,15 @@ exports.getApplicationsForStartup = async (req, res) => {
 
 
 
-exports.getTopMentorsForStartup = async (req, res) => {
+exports.topMentors = async (req, res) => {
   try {
-    const startupId = req.auth.id;
-    const userType = req.auth.userType;
-    
-    if (userType !== "startup") {
-      return res.status(403).json({
-        status: "fail",
-        message: "Only startups allowed!",
-      });
-    }
+    const companyId = req.auth.id; // startup id
 
-    // Aggregate mentors for this startup
-    const stats = await Application.aggregate([
+    const mentors = await Application.aggregate([
       {
         $match: {
-          companyId: new mongoose.Types.ObjectId(startupId),
-          status: "done", // count only finished jobs
+          companyId: new mongoose.Types.ObjectId(companyId),
+          acceptedStatus: "done", // ✅ not status
         },
       },
       {
@@ -302,28 +294,36 @@ exports.getTopMentorsForStartup = async (req, res) => {
           achievedJobs: { $sum: 1 },
         },
       },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "mentor",
+        },
+      },
+      {
+        $unwind: "$mentor",
+      },
+      {
+        $project: {
+          _id: 0,
+          mentorId: "$mentor._id",
+          name: "$mentor.name",
+          photo: "$mentor.photo",
+          achievedJobs: 1,
+        },
+      },
       { $sort: { achievedJobs: -1 } },
-      { $limit: 3 },
+      { $limit: 5 },
     ]);
-
-    // Populate mentor info
-    const mentors = await Promise.all(
-      stats.map(async (s) => {
-        const mentor = await User.findById(s._id).select("name photo");
-        return {
-          _id: mentor._id,
-          name: mentor.name,
-          photo: mentor.photo,
-          achievedJobs: s.achievedJobs,
-        };
-      })
-    );
 
     res.status(200).json({
       status: "success",
       data: mentors,
     });
   } catch (err) {
+    console.error("Top mentors error:", err);
     res.status(500).json({
       status: "fail",
       message: err.message,
