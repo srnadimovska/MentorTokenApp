@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
-  LineChart,Line,XAxis,YAxis,Tooltip,ResponsiveContainer
+  LineChart,Line,XAxis,YAxis,Tooltip,ResponsiveContainer,Legend
 } from "recharts";
 
 function StartupDashboard() {
@@ -14,6 +14,8 @@ function StartupDashboard() {
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const [activeTab, setActiveTab] = useState("All");
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -52,6 +54,28 @@ function StartupDashboard() {
       })
       setMentors(mentorRes.data.data);
 
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        const stats = {};
+
+        appRes.data.data.forEach(app => {
+        const createdAt = new Date(app.createdAt);
+        const month = months[createdAt.getMonth()];
+        if (!stats[month]) {
+          stats[month] = { month, done: 0, rejected: 0, inprogress: 0 };
+        }
+
+        if (app.acceptedStatus === "done") stats[month].done++;
+        if (app.acceptedStatus === "rejected") stats[month].rejected++;
+        if (app.acceptedStatus === "in progress") stats[month].inprogress++;
+      });
+
+      
+      const formatted = months.map(m => stats[m] || { month: m, done: 0, rejected: 0, inprogress: 0 });
+      setChartData(formatted);
+
+      
+    
+
     } catch(err){
         console.log("Error fetching the data:", err.response || err.message);
         
@@ -67,16 +91,7 @@ function StartupDashboard() {
     ? `http://localhost:11000/uploads/${user.photo}`
     : "/default.png";
 
-     const chartData = [
-      {month: "Jan", value: 1000},
-      { month: "Feb", value: 2500 },
-    { month: "Mar", value: 3500 },
-    { month: "Apr", value: 4000 },
-    { month: "May", value: 5000 },
-    { month: "Jun", value: 4500 },
-    { month: "Jul", value: 4800 },
-    { month: "Aug", value: 3000 },
-    ];
+     
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -105,18 +120,28 @@ function StartupDashboard() {
       <div className={styles.jobsSection}>
         <h3>Assigned Jobs</h3>
         <div className={styles.tabs}>
-                    <button>All</button>
-                    <button>Done</button>
-                    <button>Rejected</button>
-                    <button>In Progress</button>
-                  </div>
-        {apps.map((app) => (
-          <div key={app._id} className={styles.jobRow}>
-            <span>{app.jobId.title}</span>
-            <span className={`status ${app.acceptedStatus.toLowerCase()}`}>
-              {app.acceptedStatus.toUpperCase()}
-            </span>
-          </div>
+    {["All", "Done", "Rejected", "In Progress"].map(tab => (
+      <button
+        key={tab}
+        className={activeTab === tab ? styles.activeTab : ""}
+        onClick={() => setActiveTab(tab)}
+      >
+        {tab}
+      </button>
+    ))}
+  </div>
+
+  {apps
+    .filter(app => 
+      activeTab === "All" || app.acceptedStatus.toLowerCase() === activeTab.toLowerCase()
+    )
+    .map(app => (
+      <div key={app._id} className={styles.jobRow}>
+        <span>{app.jobId.title}</span>
+        <span className={`${styles.status} ${styles[app.acceptedStatus.replace(" ", "").toLowerCase()]}`}>
+          {app.acceptedStatus.toUpperCase()}
+        </span>
+      </div>
         ))}
       </div>
 
@@ -141,20 +166,18 @@ function StartupDashboard() {
       </div>
       <div className={styles.bottomWrapper}>
                   <div className={styles.performanceCard}>
-                    <h3>Performance Over Time</h3>
+                    <h3>Overall Statistic</h3>
+                    <h4>Overall target acomplishment over the year</h4>
                     <ResponsiveContainer width="100%" height={200}>
-                        <LineChart data={chartData}>
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <Tooltip />
-                          <Line
-                            type="monotone"
-                            dataKey="value"
-                            stroke="#6c63ff"
-                            strokeWidth={3}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
+  <LineChart data={chartData}>
+    <XAxis dataKey="month" />
+    <YAxis allowDecimals={false} />
+    <Tooltip />
+    <Line type="monotone" dataKey="done" stroke="green" strokeWidth={2} />
+    <Line type="monotone" dataKey="rejected" stroke="#dc3545" strokeWidth={2} />
+    <Line type="monotone" dataKey="inprogress" stroke="#6c63ff" strokeWidth={2} />
+  </LineChart>
+</ResponsiveContainer>
       
                   </div>
       </div>

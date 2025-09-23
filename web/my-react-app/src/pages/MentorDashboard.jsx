@@ -8,7 +8,7 @@ function MentorDashboard() {
   const [user, setUser] = useState(null);
   const [assigned, setAssigned] = useState([]);
   const [pending, setPending] = useState([]);
-  
+  const [filter, setFilter] = useState("All");
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const[error,setError] = useState(null);
@@ -43,8 +43,6 @@ function MentorDashboard() {
     if (!user) return;
 
     const fetchData = async () => {
-      
-
       try {
         const res = await axios.get(
           `http://localhost:11000/api/v1/application/mentor/${user.id}`,
@@ -55,12 +53,7 @@ function MentorDashboard() {
 
         const apps = res.data.data || [];
         setApplications(apps);
-        setAssigned(
-          apps.filter((app) =>
-  
-          ["in progress","done","rejected"].includes(app.status)
-));
-        setPending(apps.filter((app) => app.status === "pending"));
+
         
       } catch (err) {
         console.log("Error fetching the data:", err.response || err.message);
@@ -72,13 +65,53 @@ function MentorDashboard() {
     fetchData();
   }, [user, token]);
 
-  const photo = user?.photo
-    ? `http://localhost:11000/uploads/${user.photo}`
-    : "/default.png";
+  const handleDecision = async (id, decision) => {
+    try {
+      const res = 
+      await axios.patch(
+        `http://localhost:11000/api/v1/application/${id}`,
+        { acceptedStatus: decision },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updated = res.data.data;
+
+      setApplications((prev) => 
+      prev.map((app) => (app._id === id? updated: app)))
+
+      setPending((prev) => prev.filter((app) => app._id !== id));
+
+    setAssigned((prev) => [...prev, updated]);
+
+      
+    } catch (err) {
+      console.error("Error updating app:", err.response || err.message);
+    }
+  };
+
+
+  
+
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
   if (!token) return <p>Please log in to view your dashboard.</p>;
+
+  const assignedJobs = applications.filter((app) =>
+    ["in progress", "done", "rejected"].includes(app.acceptedStatus)
+  );
+
+  const pendingJobs = applications.filter((app) => app.status === "pending");
+
+  const filteredAssigned =
+    filter === "all"
+      ? assigned
+      : assigned.filter((app) => app.acceptedStatus === filter);
+
+      const photo = user?.photo
+    ? `http://localhost:11000/uploads/${user.photo}`
+    : "/default.png";
 
   return (
     
@@ -104,24 +137,24 @@ function MentorDashboard() {
         <div className={styles.section}>
           <h2>Assigned Jobs</h2>
           <div className={styles.tabs}>
-            <button>All</button>
-            <button>Done</button>
-            <button>Rejected</button>
-            <button>In Progress</button>
+            <button onClick={() => setFilter("All")}>All</button>
+            <button onClick={() => setFilter("done")}>Done</button>
+            <button onClick={() => setFilter("rejected")}>Rejected</button>
+            <button onClick={() => setFilter("in progress")}>In Progress</button>
           </div>
 
-          {assigned.length > 0 ? (
+          {filteredAssigned.length > 0 ? (
             <div className={styles.cards}>
-              {assigned.map((app) => (
+              {filteredAssigned.map((app) => (
                 <div key={app._id} className={styles.card}>
                   <p className={styles.jobTitle}>{app.jobId?.title}</p>
                   <span
                     className={`${styles.status} ${
-                      styles[app.status.toLowerCase().replace(/\s+/g, "-")] ||
+                      styles[app.acceptedStatus.toLowerCase().replace(/\s+/g, "-")] ||
                       ""
                     }`}
                   >
-                    {app.status.toUpperCase()}
+                    {app.acceptedStatus.toUpperCase()}
                   </span>
                 </div>
               ))}
@@ -141,8 +174,18 @@ function MentorDashboard() {
                   <div key={app._id} className={styles.card}>
                     <p className={styles.jobTitle}>{app.jobId?.title}</p>
                     <div className={styles.actions}>
-                      <button className={styles.accept}>Accept</button>
-                      <button className={styles.reject}>Reject</button>
+                      <button
+                      onClick={() => handleDecision(app._id, "in progress")}
+                      className={styles.accept}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => handleDecision(app._id, "rejected")}
+                      className={styles.reject}
+                    >
+                      Reject
+                    </button>
                     </div>
                   </div>
                 ))}

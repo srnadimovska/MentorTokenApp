@@ -137,11 +137,10 @@
 }
 
 .status {
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-weight: 600;
   font-size: 12px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-  text-transform: uppercase;
 }
 
 .pending {
@@ -150,18 +149,18 @@
 }
 
 .in-progress {
-  background: #e7f0fd;
-  color: #2962ff;
+  background: #f0e2ff;
+  color: purple;
 }
 
 .done {
-  background: #e6f9ed;
-  color: #2c9c57;
+  background: #d4f8e8;
+  color: green;
 }
 
 .rejected {
-  background: #fde7e7;
-  color: #d93025;
+  background: #fde2e2;
+  color: red;
 }
 
 

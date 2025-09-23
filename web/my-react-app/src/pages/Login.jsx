@@ -85,7 +85,7 @@ function Login() {
             {error && (
               <div style={{ color: "red", marginBottom: 8 }}>{error}</div>
             )}
-            <button type="submit">Login in</button>
+            <button type="submit">Log in</button>
           </form>
         </div>
 
