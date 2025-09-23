@@ -137,10 +137,12 @@
 }
 
 .status {
-  padding: 4px 10px;
-  border-radius: 10px;
   font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
   font-size: 12px;
+  display: inline-block;
+  text-transform: uppercase;
 }
 
 .pending {
@@ -148,19 +150,22 @@
   color: #2962ff;
 }
 
-.in-progress {
-  background: #f0e2ff;
-  color: purple;
+.status.in-progress {
+  background-color: #f3e8ff;
+  color: #6a1b9a;
+  border: 1px solid #6a1b9a;
 }
 
-.done {
-  background: #d4f8e8;
-  color: green;
+.status.done {
+  background-color: #e6f8ec;
+  color: #2e7d32;
+  border: 1px solid #2e7d32;
 }
 
-.rejected {
-  background: #fde2e2;
-  color: red;
+.status.rejected {
+  background-color: #fdeaea;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
 }
 
 
@@ -185,5 +190,20 @@
   border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
+}
+
+.deleteButton {
+  background-color: #ff4d4d;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.deleteButton:hover {
+  background-color: #e60000;
 }
 

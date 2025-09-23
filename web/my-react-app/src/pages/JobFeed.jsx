@@ -6,6 +6,7 @@ import search from "../assets/search.png";
 function Jobfeed(){
     const [offers,setOffers] = useState([]);
     const [user, setUser] = useState(null);
+    const [selectedOffer, setSelectedOffer] = useState(null);
 
     const token = localStorage.getItem("token");
 
@@ -92,7 +93,7 @@ fetchOffers();
                         <h3>{offer.jobId?.title}</h3>
                         <p className={styles.newOffer}>New Job Offer</p>
                         <p>{offer.jobId?.description}</p>
-                        <button>View More</button>
+                        <button onClick={() => setSelectedOffer(offer)}>View More</button>
 
                     </div>
 
@@ -103,6 +104,20 @@ fetchOffers();
                 
 
               </div>
+              {selectedOffer && (
+  <div className={styles.modalOverlay}>
+    <div className={styles.modal}>
+      <h2>{selectedOffer.jobId?.title}</h2>
+      <p><strong>Company:</strong> {selectedOffer.companyId?.name}</p>
+      <p><strong>Description:</strong> {selectedOffer.jobId?.description}</p>
+      <p><strong>Skills required:</strong> {selectedOffer.jobId?.skills?.join(", ") || "Not specified"}</p>
+
+      <div className={styles.modalActions}>
+        <button onClick={() => setSelectedOffer(null)}>Close</button>
+      </div>
+    </div>
+  </div>
+)}
         </>
     )
 }

@@ -150,7 +150,13 @@ exports.getOneApp = async (req, res) => {
 
 exports.updateApp = async (req, res) => {
   try {
-    const app = await Application.findByIdAndUpdate(req.params.id, req.body, {
+    const { acceptedStatus } = req.body;
+    const app = await Application.findByIdAndUpdate(req.params.id, {
+      acceptedStatus,
+      status: acceptedStatus === "in progress" || acceptedStatus === "done" || acceptedStatus === "rejected"
+          ? "assigned"
+          : "pending"
+    }, {
       new: true,
       runValidators: true,
     });

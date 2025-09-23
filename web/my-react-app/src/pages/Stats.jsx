@@ -81,9 +81,9 @@ fetchUser();
 
       setStatsData({
         total: apps.length,
-        assigned: apps.filter(app => app.status === "in progress").length,
+        assigned: apps.filter(app => app.acceptedStatus === "in progress").length,
         applied: apps.filter(app => app.applicationType === "mentorToCompany").length,
-        finished: apps.filter(app => app.status === "done").length,
+        finished: apps.filter(app => app.acceptedStatus === "done").length,
       });
     } catch (err) {
       console.log("Error fetching stats:", err.message);

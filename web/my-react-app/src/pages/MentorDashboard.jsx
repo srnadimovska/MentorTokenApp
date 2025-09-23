@@ -1,13 +1,12 @@
 import styles from "./MentorDashboard.module.css";
 import search from "../assets/search.png";
+import clock from "../assets/clock.svg";
 import  {jwtDecode} from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 function MentorDashboard() {
   const [user, setUser] = useState(null);
-  const [assigned, setAssigned] = useState([]);
-  const [pending, setPending] = useState([]);
   const [filter, setFilter] = useState("All");
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +53,6 @@ function MentorDashboard() {
         const apps = res.data.data || [];
         setApplications(apps);
 
-        
       } catch (err) {
         console.log("Error fetching the data:", err.response || err.message);
       } finally {
@@ -78,21 +76,24 @@ function MentorDashboard() {
 
       setApplications((prev) => 
       prev.map((app) => (app._id === id? updated: app)))
-
-      setPending((prev) => prev.filter((app) => app._id !== id));
-
-    setAssigned((prev) => [...prev, updated]);
-
-      
+ 
     } catch (err) {
       console.error("Error updating app:", err.response || err.message);
     }
   };
 
+  const handleDelete = async (id) => {
+  try {
+    await axios.delete(`http://localhost:11000/api/v1/application/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  
-
-
+    
+    setApplications((prev) => prev.filter((app) => app._id !== id));
+  } catch (err) {
+    console.error("Error deleting app:", err.response || err.message);
+  }
+};
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -104,10 +105,11 @@ function MentorDashboard() {
 
   const pendingJobs = applications.filter((app) => app.status === "pending");
 
+  
   const filteredAssigned =
-    filter === "all"
-      ? assigned
-      : assigned.filter((app) => app.acceptedStatus === filter);
+    filter === "All"
+      ? assignedJobs
+      : assignedJobs.filter((app) => app.acceptedStatus === filter);
 
       const photo = user?.photo
     ? `http://localhost:11000/uploads/${user.photo}`
@@ -168,9 +170,9 @@ function MentorDashboard() {
           <div>
             <h2>Pending jobs</h2>
             <p>Jobs offered from your startup</p>
-            {pending.length > 0 ? (
+            {pendingJobs.length > 0 ? (
               <div className={styles.cards}>
-                {pending.map((app) => (
+                {pendingJobs.map((app) => (
                   <div key={app._id} className={styles.card}>
                     <p className={styles.jobTitle}>{app.jobId?.title}</p>
                     <div className={styles.actions}>
@@ -202,7 +204,12 @@ function MentorDashboard() {
               <div className={styles.cards}>
                 {applications.map((app) => (
                   <div key={app._id} className={styles.card}>
-                    <p className={styles.jobTitle}> {app.jobId?.title}</p>
+                    <p className={styles.jobTitle}> {app.jobId?.title}
+                      
+                      <span>
+                        <button onClick={() => handleDelete(app._id)} className={styles.deleteButton}>Delete</button></span>
+                      <span><img src={clock} alt="clock"/></span>
+                    </p>
                     
                   </div>
                 ))}
