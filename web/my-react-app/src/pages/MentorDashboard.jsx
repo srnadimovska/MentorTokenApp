@@ -103,7 +103,7 @@ function MentorDashboard() {
     ["in progress", "done", "rejected"].includes(app.acceptedStatus)
   );
 
-  const pendingJobs = applications.filter((app) => app.status === "pending");
+  const pendingJobs = applications.filter((app) => app.applicationType === "companyToMentor" && app.status === "pending");
 
   
   const filteredAssigned =

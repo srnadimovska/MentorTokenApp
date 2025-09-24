@@ -86,21 +86,23 @@
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  /* box-shadow: 0 2px 6px rgba(0,0,0,0.05); */
 }
 
 .tabs button {
-  border: none;
+  border-bottom: 1px solid grey;
   padding: 6px 12px;
   border-radius: 12px;
   background: #f3f3f3;
   cursor: pointer;
   transition: all 0.2s ease;
+  color:grey;
 }
 
 .tabs button:hover {
-  background: #6c63ff;
+  background: #dddcea;
   color: #fff;
+  border-bottom: 1px solid grey;
 }
 
 .jobRow {

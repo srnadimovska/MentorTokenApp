@@ -88,17 +88,31 @@ fetchUser();
         finished: apps.filter(app => app.acceptedStatus === "done").length,
       });
 
+      // Group by month
+      const allMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       const monthlyCounts = {};
+
+      allMonths.forEach(m => {
+  monthlyCounts[m] = { month: m, done: 0, inProgress: 0, rejected: 0 };
+});
       apps.forEach(app => {
         const created = new Date(app.createdAt);
         const month = created.toLocaleString("default", { month: "short" });
-        monthlyCounts[month] = (monthlyCounts[month] || 0) + 1;
+
+        if (!monthlyCounts[month]) {
+          monthlyCounts[month] = { month, done: 0, inProgress: 0, rejected: 0 };
+        }
+
+        if (app.acceptedStatus === "done") {
+          monthlyCounts[month].done++;
+        } else if (app.acceptedStatus === "in progress") {
+          monthlyCounts[month].inProgress++;
+        } else if (app.acceptedStatus === "rejected") {
+          monthlyCounts[month].rejected++;
+        }
       });
 
-      setChartData(Object.keys(monthlyCounts).map(m => ({
-        month: m,
-        value: monthlyCounts[m],
-      })));
+      setChartData(Object.values(monthlyCounts));
     } catch (err) {
       console.log("Error fetching stats:", err.message);
     }
@@ -161,19 +175,16 @@ fetchUser();
           <div className={styles.bottomWrapper}>
             <div className={styles.performanceCard}>
               <h3>Performance Over Time</h3>
-              <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={chartData}>
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#6c63ff"
-                      strokeWidth={3}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+              <ResponsiveContainer width="100%" height={250}>
+  <LineChart data={chartData}>
+    <XAxis dataKey="month" />
+    <YAxis />
+    <Tooltip />
+    <Line type="monotone" dataKey="done" stroke="green" strokeWidth={3} dot={false} />
+    <Line type="monotone" dataKey="inProgress" stroke="purple" strokeWidth={3} dot={false} />
+    <Line type="monotone" dataKey="rejected" stroke="red" strokeWidth={3} dot={false} />
+  </LineChart>
+</ResponsiveContainer>
 
             </div>
 

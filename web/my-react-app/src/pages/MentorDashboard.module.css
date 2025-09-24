@@ -96,12 +96,19 @@
 }
 
 .tabs button {
-  /* background: #f0f2ff; */
-  border-bottom: 1px solid #b0b3c0;
-  /* border-radius: 8px; */
+  border-bottom: 1px solid grey;
   padding: 6px 12px;
-  font-size: 14px;
+  /* border-radius: 12px; */
+  background: transparent;
   cursor: pointer;
+  transition: all 0.2s ease;
+  color:grey;
+}
+
+.tabs button:hover {
+  /* background: #dddcea; */
+  color: blue;
+  border-bottom: 1px solid blue;
 }
 
 .cards {
@@ -109,6 +116,8 @@
   grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
   gap: 16px;
   max-width: 100%;
+  
+  
 }
 
 .card {
@@ -129,11 +138,17 @@
 }
 
 .jobTitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap:40px;
   font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  
 }
 
 .status {
