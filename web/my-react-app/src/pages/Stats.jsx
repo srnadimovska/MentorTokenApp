@@ -16,6 +16,7 @@ function Stats() {
   applied: 0,
   finished: 0,
 });
+const [chartData, setChartData] = useState([]);
 
   const token = localStorage.getItem("token");
 
@@ -66,10 +67,11 @@ function Stats() {
 fetchUser();
     
     
-  }, [user, token]);
+  }, [user?.id, token]);
+
   useEffect(() => {
   const fetchStats = async () => {
-    if (!user) return;
+    if (!user?.id) return;
 
     try {
       const res = await axios.get(
@@ -85,9 +87,22 @@ fetchUser();
         applied: apps.filter(app => app.applicationType === "mentorToCompany").length,
         finished: apps.filter(app => app.acceptedStatus === "done").length,
       });
+
+      const monthlyCounts = {};
+      apps.forEach(app => {
+        const created = new Date(app.createdAt);
+        const month = created.toLocaleString("default", { month: "short" });
+        monthlyCounts[month] = (monthlyCounts[month] || 0) + 1;
+      });
+
+      setChartData(Object.keys(monthlyCounts).map(m => ({
+        month: m,
+        value: monthlyCounts[m],
+      })));
     } catch (err) {
       console.log("Error fetching stats:", err.message);
     }
+    
   };
 
   fetchStats();
@@ -97,16 +112,7 @@ fetchUser();
     ? `http://localhost:11000/uploads/${user.photo}`
     : "/default.png";
 
-    const chartData = [
-      {month: "Jan", value: 1000},
-      { month: "Feb", value: 2500 },
-    { month: "Mar", value: 3500 },
-    { month: "Apr", value: 4000 },
-    { month: "May", value: 5000 },
-    { month: "Jun", value: 4500 },
-    { month: "Jul", value: 4800 },
-    { month: "Aug", value: 3000 },
-    ];
+    
 
   return (
     <>
