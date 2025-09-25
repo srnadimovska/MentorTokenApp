@@ -99,17 +99,26 @@ function MentorDashboard() {
   if (error) return <p>{error}</p>;
   if (!token) return <p>Please log in to view your dashboard.</p>;
 
-  const assignedJobs = applications.filter((app) =>
+  const assignedJobs = applications.filter(
+    (app) =>
     ["in progress", "done", "rejected"].includes(app.acceptedStatus)
   );
 
-  const pendingJobs = applications.filter((app) => app.applicationType === "companyToMentor" && app.status === "pending");
+  const pendingJobs = applications.filter((app) => 
+    app.applicationType === "companyToMentor" &&
+   app.status === "pending");
 
   
   const filteredAssigned =
     filter === "All"
       ? assignedJobs
       : assignedJobs.filter((app) => app.acceptedStatus === filter);
+
+      const sentApplications = applications.filter(
+  (app) =>
+    app.applicationType === "mentorToCompany" &&
+    app.status === "pending"
+);
 
       const photo = user?.photo
     ? `http://localhost:11000/uploads/${user.photo}`
@@ -200,9 +209,9 @@ function MentorDashboard() {
           <div className={styles.section}>
             <h2>Applications sent</h2>
             <p>Jobs you have applied for</p>
-            {applications.length > 0 ? (
+            {sentApplications.length > 0 ? (
               <div className={styles.cards}>
-                {applications.map((app) => (
+                {sentApplications.map((app) => (
                   <div key={app._id} className={styles.card}>
                     <p className={styles.jobTitle}> {app.jobId?.title}
                       
